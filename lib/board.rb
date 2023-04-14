@@ -1,8 +1,8 @@
 
 class Board
   attr_reader :values
-  
-  def initialize(values = Array.new(6){ Array.new(7)})
+
+  def initialize(values = Array.new(6) { Array.new(7) })
     @values = values
   end
 
@@ -12,15 +12,19 @@ class Board
     end
   end
 
-  def to_s
-    values.each { |row| p row }
+  def pretty_print
+    values.each do |row|
+      row.each do |token|
+        print token.nil? ? "|  #{token} |" : "| #{token} |"
+      end
+      puts ''
+    end
+    puts '-----------------------------------'
+    7.times { |num| print "| #{num} |" }
+    puts ''
+    puts '-----------------------------------'
   end
 end
 board = Board.new
-board.update_board(1,'o')
-board.update_board(2,'o')
-board.update_board(2,'x')
-board.update_board(2,'x')
 
-
-board.to_s
+board.pretty_print
