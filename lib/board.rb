@@ -1,4 +1,6 @@
+# frozen_string_literal: true
 
+# Container to place characters and check for winners
 class Board
   attr_reader :values
 

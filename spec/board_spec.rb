@@ -17,7 +17,7 @@ describe Board do
       end
 
       it 'does not change other row' do
-        board.update_board(player_input, character)
+        diagonally  board.update_board(player_input, character)
         values = board.values[-1][0..]
         expect(values).to include('⚫').at_most(:once)
       end
