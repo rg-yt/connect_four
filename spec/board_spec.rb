@@ -79,13 +79,15 @@ describe Board do
     context 'on a full board' do
       subject(:full_board) { described_class.new }
       before do
-        full_board.instance_variable_set(:@values, [
-          [nil, nil, nil, nil, nil, nil, '⚪'],
-          [nil, nil, nil, '⚪', '⚪', nil, '⚪'],
-          ['⚫', nil, '⚫', '⚫', '⚪', nil, '⚪'],
-          ['⚪', '⚫', '⚫', '⚫', '⚪', '⚪', '⚪'],
-          ['⚪', '⚪', '⚫', '⚪', '⚪', '⚪', '⚪'],
-          ['⚪', '⚪', '⚫', '⚪', '⚪', '⚪', '⚪']])
+        full_board.instance_variable_set(
+          :@values,
+          [[nil, nil, nil, nil, nil, nil, '⚪'],
+           [nil, nil, nil, '⚪', '⚪', nil, '⚪'],
+           ['⚫', nil, '⚫', '⚫', '⚪', nil, '⚪'],
+           ['⚪', '⚫', '⚫', '⚫', '⚪', '⚪', '⚪'],
+           ['⚪', '⚪', '⚫', '⚪', '⚪', '⚪', '⚪'],
+           ['⚪', '⚪', '⚫', '⚪', '⚪', '⚪', '⚪']]
+        )
       end
 
       it 'is a win' do
@@ -98,18 +100,65 @@ describe Board do
 
   describe '#win_diagonally?' do
     subject(:board) { described_class.new }
-    before do
-      board.instance_variable_set(:@values, [
-        ['⚪', '⚫', '⚫', '⚫', '⚫', '⚫', '⚪'],
-        ['⚪', '⚪', '⚪', '⚪', '⚪', '⚫', '⚪'],
-        ['⚫', '⚪', '⚫', '⚫', '⚪', '⚪', '⚪'],
-        ['⚪', '⚫', '⚫', '⚫', '⚪', '⚪', '⚪'],
-        ['⚪', '⚪', '⚫', '⚪', '⚪', '⚪', '⚪'],
-        ['⚪', '⚪', '⚫', '⚪', '⚪', '⚪', '⚪']])
+    context 'on a full board' do
+      before do
+        board.instance_variable_set(
+          :@values,
+          [['⚫', '⚫', '⚫', '⚫', '⚫', '⚫', '⚪'],
+           ['⚪', '⚪', '⚪', '⚪', '⚪', '⚫', '⚪'],
+           ['⚫', '⚪', '⚫', '⚫', '⚪', '⚪', '⚪'],
+           ['⚪', '⚫', '⚫', '⚫', '⚪', '⚪', '⚪'],
+           ['⚪', '⚪', '⚫', '⚪', '⚪', '⚪', '⚪'],
+           ['⚪', '⚪', '⚫', '⚪', '⚪', '⚪', '⚪']]
+        )
+      end
+
+      it '[1,3] is a win' do
+        result = board.win_diagonally?([1, 3], '⚪')
+        expect(result).to be true
+      end
+
+      it '[0,0] is not a win' do
+        result = board.win_diagonally?([0, 0], '⚪')
+        expect(result).to be false
+      end
+
+      it '[5,0] is not a win' do
+        result = board.win_diagonally?([5, 0], '⚫')
+        expect(result).to be false
+      end
     end
-    it 'is a win' do
-      result = board.win_diagonally?([1,5], '⚪')
-      expect(result).to be true
+  end
+
+  describe '#game_end?' do
+    subject(:board) { described_class.new }
+    context 'on a full board' do
+      before do
+        board.instance_variable_set(
+          :@values,
+          [['⚫', '⚫', '⚫', '⚫', '⚫', '⚫', '⚪'],
+           ['⚪', '⚪', '⚪', '⚪', '⚪', '⚫', '⚪'],
+           ['⚫', '⚪', '⚫', '⚫', '⚪', '⚪', '⚪'],
+           ['⚪', '⚫', '⚫', '⚫', '⚪', '⚪', '⚪'],
+           ['⚪', '⚪', '⚫', '⚪', '⚪', '⚪', '⚪'],
+           ['⚪', '⚪', '⚫', '⚪', '⚪', '⚪', '⚪']]
+        )
+      end
+
+      it '[1, 2] is a win for black' do
+        result = board.end_game?([1, 2], '⚫')
+        expect(result).to be true
+      end
+
+      it '[1, 2] is a win white' do
+        result = board.end_game?([1, 2], '⚪')
+        expect(result).to be true
+      end
+
+      it '[2, 0] is not a win for white' do
+        result = board.end_game?([2, 0], '⚪')
+        expect(result).to be false
+      end
     end
   end
 end
