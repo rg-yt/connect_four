@@ -16,6 +16,10 @@ class Board
       end
     end
   end
+  
+  def space_available?(column)
+    values.any? { |row| row[column].nil? }
+  end
 
   def end_game?(coordinates, character)
     win_across?(coordinates, character) || win_diagonally?(coordinates, character) || win_up_down?(coordinates, character)
@@ -56,14 +60,14 @@ class Board
   def pretty_print
     values.each do |row|
       row.each do |token|
-        print token.nil? ? "|  #{token} |" : "| #{token} |"
+        print token.nil? ? "|  #{token}  |" : "| #{token} |"
       end
       puts ''
     end
-    puts '-----------------------------------'
-    7.times { |num| print "| #{num} |" }
+    puts '------------------------------------------'
+    7.times { |num| print "|  #{num} |" }
     puts ''
-    puts '-----------------------------------'
+    puts '------------------------------------------'
   end
 end
 
