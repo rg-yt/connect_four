@@ -32,35 +32,35 @@ describe Board do
     end
   end
 
-  describe 'win_up_down?' do
+  describe '#win_up_down?' do
     context 'when board is one away from win' do
       subject(:board) { described_class.new() }  
       before do
         board.instance_variable_set(:@values, [[nil], ['⚫'], ['⚫'], ['⚫'], ['⚪'], ['⚪']])
       end
       it 'is not a win before adding a piece' do
-        result = board.win_up_down?(0, '⚫')
+        result = board.win_up_down?([0, 0], '⚫')
         expect(result).to be false
       end
 
       it 'is a win after adding a player piece' do
-        board.update_board(0, '⚫')
-        result = board.win_up_down?(0, '⚫')
+        location = board.update_board(0, '⚫')
+        result = board.win_up_down?(location, '⚫')
         expect(result).to be true
       end
 
       it 'is not a win if checked for the other player' do
-        result = board.win_up_down?(0, '⚪')
+        result = board.win_up_down?([0, 0], '⚪')
         expect(result).to be false
       end
     end
   end
 
-  describe 'win_across?' do
+  describe '#win_across?' do
     subject(:board) { described_class.new }
     context 'on an empty board' do
       it 'is not a win' do
-        result = board.win_across?(0, '⚪')
+        result = board.win_across?([0, 0], '⚪')
         expect(result).to be false
       end
     end
@@ -71,7 +71,7 @@ describe Board do
       end
 
       it 'is a win' do
-        result = board.win_across?(0, '⚪')
+        result = board.win_across?([0, 0], '⚪')
         expect(result).to be true
       end
     end
@@ -81,17 +81,35 @@ describe Board do
       before do
         full_board.instance_variable_set(:@values, [
           [nil, nil, nil, nil, nil, nil, '⚪'],
-          [nil, nil, nil, nil, nil, nil, '⚪'],
-          ['⚫', '⚫', '⚫', '⚫', '⚪', nil, '⚪'],
+          [nil, nil, nil, '⚪', '⚪', nil, '⚪'],
+          ['⚫', nil, '⚫', '⚫', '⚪', nil, '⚪'],
           ['⚪', '⚫', '⚫', '⚫', '⚪', '⚪', '⚪'],
           ['⚪', '⚪', '⚫', '⚪', '⚪', '⚪', '⚪'],
           ['⚪', '⚪', '⚫', '⚪', '⚪', '⚪', '⚪']])
       end
 
       it 'is a win' do
-        result = full_board.win_across?(3, '⚫')
+        location = full_board.update_board(1, '⚫')
+        result = full_board.win_across?(location, '⚫')
         expect(result).to be true
       end
+    end
+  end
+
+  describe '#win_diagonally?' do
+    subject(:board) { described_class.new }
+    before do
+      board.instance_variable_set(:@values, [
+        ['⚪', '⚫', '⚫', '⚫', '⚫', '⚫', '⚪'],
+        ['⚪', '⚪', '⚪', '⚪', '⚪', '⚫', '⚪'],
+        ['⚫', '⚪', '⚫', '⚫', '⚪', '⚪', '⚪'],
+        ['⚪', '⚫', '⚫', '⚫', '⚪', '⚪', '⚪'],
+        ['⚪', '⚪', '⚫', '⚪', '⚪', '⚪', '⚪'],
+        ['⚪', '⚪', '⚫', '⚪', '⚪', '⚪', '⚪']])
+    end
+    it 'is a win' do
+      result = board.win_diagonally?([1,5], '⚪')
+      expect(result).to be true
     end
   end
 end
