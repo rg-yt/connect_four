@@ -2,24 +2,95 @@ require 'board'
 
 describe Board do
   describe '#update_board' do
-    let(:bottom_row) { ['o', nil, 'o', 'o', 'o', 'o', 'o'] }
-    let(:top_row) { Array.new(6) { Array.new(6) } }
-    subject(:board) { described_class.new(top_row << bottom_row) }
-    it 'changes the bottom character in the column to player input' do
-      player_input = 1
-      character = 'O'
-      expect { board.update_board(player_input, character) }.to change { board.values[-1][1] }.to(character)
+    subject(:board) { described_class.new}
+    let(:character) { '⚫' }
+    let(:player_input) { 1 }
+    context 'when row is empty' do
+      it 'changes the top of player input coloumn to character' do
+        board.update_board(player_input, character)
+        expect(board.values[-1][1]).to eq('⚫')
+      end
+
+      it 'does not change other characters in the column' do
+        board.update_board(player_input, character)
+        expect(board.values[-2][1]).to be_nil
+      end
+
+      it 'does not change other row' do
+        board.update_board(player_input, character)
+        values = board.values[-1][0..]
+        expect(values).to include('⚫').at_most(:once)
+      end
     end
 
     context 'when another character is no the bottom' do
-      let(:character) { 'o' }
-      let(:player_input) { 2 }
-      before do
-        board.update_board(player_input, character) # add one 'o' to column 1
-      end
       it 'changes the top of the stack' do
-        expected_change = board.values[-2][player_input]
-        expect(expected_change).to eq(character)
+        board.update_board(player_input, character)
+        board.update_board(player_input, character)
+        expect(board.values[-2][1]).to eq('⚫')
+      end
+    end
+  end
+
+  describe 'win_up_down?' do
+    context 'when board is one away from win' do
+      subject(:board) { described_class.new() }  
+      before do
+        board.instance_variable_set(:@values, [[nil], ['⚫'], ['⚫'], ['⚫'], ['⚪'], ['⚪']])
+      end
+      it 'is not a win before adding a piece' do
+        result = board.win_up_down?(0, '⚫')
+        expect(result).to be false
+      end
+
+      it 'is a win after adding a player piece' do
+        board.update_board(0, '⚫')
+        result = board.win_up_down?(0, '⚫')
+        expect(result).to be true
+      end
+
+      it 'is not a win if checked for the other player' do
+        result = board.win_up_down?(0, '⚪')
+        expect(result).to be false
+      end
+    end
+  end
+
+  describe 'win_across?' do
+    subject(:board) { described_class.new }
+    context 'on an empty board' do
+      it 'is not a win' do
+        result = board.win_across?(0, '⚪')
+        expect(result).to be false
+      end
+    end
+
+    context 'on a reduced board' do
+      before do
+        board.instance_variable_set(:@values, [['⚪', '⚪', '⚪', '⚪'], ['⚪', '⚪', '⚫', '⚪', '⚪', '⚪', '⚪']])
+      end
+
+      it 'is a win' do
+        result = board.win_across?(0, '⚪')
+        expect(result).to be true
+      end
+    end
+
+    context 'on a full board' do
+      subject(:full_board) { described_class.new }
+      before do
+        full_board.instance_variable_set(:@values, [
+          [nil, nil, nil, nil, nil, nil, '⚪'],
+          [nil, nil, nil, nil, nil, nil, '⚪'],
+          ['⚫', '⚫', '⚫', '⚫', '⚪', nil, '⚪'],
+          ['⚪', '⚫', '⚫', '⚫', '⚪', '⚪', '⚪'],
+          ['⚪', '⚪', '⚫', '⚪', '⚪', '⚪', '⚪'],
+          ['⚪', '⚪', '⚫', '⚪', '⚪', '⚪', '⚪']])
+      end
+
+      it 'is a win' do
+        result = full_board.win_across?(3, '⚫')
+        expect(result).to be true
       end
     end
   end
