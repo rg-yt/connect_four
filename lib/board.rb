@@ -30,8 +30,25 @@ class Board
     values.reverse[coordinates.first].join('').include?(character * 4)
   end
 
-  def win_diagonally?(player_input, character)
-    
+  def win_diagonally?(coordanates, character)
+    diagonal_up(coordanates.first, coordanates.last, character) ||
+      diagonal_down(coordanates.first, coordanates.last, character)
+  end
+
+  def diagonal_up(row, column, character, array = [])
+    return array.join('').include?(character * 4) unless column.between?(0, 7)
+    return diagonal_up(row + 1, column - 1, character) if array.empty? && column != 0
+
+    array << (row.between?(0, @values.length) ? @values.reverse.dig(row, column) : nil)
+    diagonal_up(row - 1, column + 1, character, array)
+  end
+
+  def diagonal_down(row, column, character, array = [])
+    return array.join('').include?(character * 4) unless column.between?(0, 7)
+    return diagonal_down(row - 1, column - 1, character) if array.empty? && column != 0
+
+    array << (row.between?(0, @values.length) ? @values.reverse.dig(row, column) : nil)
+    diagonal_down(row + 1, column + 1, character, array)
   end
 
   def pretty_print
@@ -47,7 +64,5 @@ class Board
     puts '-----------------------------------'
   end
 end
-board = Board.new
-p board.update_board(1, 'x')
-p board.update_board(1, 'x')
+
 
