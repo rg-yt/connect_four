@@ -16,7 +16,7 @@ class Board
       end
     end
   end
-  
+
   def space_available?(column)
     values.any? { |row| row[column].nil? }
   end
@@ -70,5 +70,3 @@ class Board
     puts '------------------------------------------'
   end
 end
-
-
